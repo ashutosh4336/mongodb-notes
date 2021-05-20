@@ -650,3 +650,86 @@ db.person.aggregate([
 ])
 
 ```
+
+```sql
+db.employees.aggregate([
+
+    {
+        $group: {
+            _id: {
+                age : "$age",
+            },
+            allHobbies: {
+                $push: "$hobbies"
+            }
+
+        }
+    }
+
+])
+
+```
+
+### `$size` of an array
+
+```sql
+db.employees.aggregate([
+{
+    $project: {_id : 1, numScores : {$size: "$examScores"}}
+}
+])
+```
+
+### `$slice` of an Array
+
+```sql
+db.employees.aggregate([
+    {
+        $project: {_id : 0, examScores : {$slice: ["$examScores", -2]}}
+    }
+])
+```
+
+### $filter
+
+> Local Variable `$$`
+
+```sql
+db.employees.aggregate([
+    {
+        $project: {
+            _id : 1,
+            examScores : {
+                $filter: {
+                    input: "$examScores",
+                    as: "finalScore",
+                    cond: { $gt: ["$$finalScore.score", 60]  }
+                }
+            }
+        }
+    }
+])
+```
+
+### Numbers in MongoDB
+
+```sql
+db.numbers.insertOne(
+    {
+        a : NumberDecimal("0.3"),
+        b : NumberDecimal("0.2")
+    }
+)
+```
+
+```sql
+db.numbers.aggregate([
+    {
+        $project : {
+            result : {
+                $subtract : ["$a",  "$b"]
+            }
+        }
+    }
+])
+```
